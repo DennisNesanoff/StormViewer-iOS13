@@ -19,10 +19,26 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
         title = "Picture \(number) of \(count)"
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
         if let image = selectedImage {
             imageView.image = UIImage(named: image)
         }
+    }
+    
+    @objc func shareTapped() {
+        guard let image = imageView.image?.jpegData(compressionQuality: 0.8) else {
+            print("No image found")
+            return
+        }
+        
+        guard let nameOfImage = selectedImage else {
+            print("No image found")
+            return
+        }
+        
+        let vc = UIActivityViewController(activityItems: [image, nameOfImage], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(vc, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
